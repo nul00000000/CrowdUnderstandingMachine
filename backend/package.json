@@ -1,0 +1,9 @@
+{
+  "name": "cum-presentinator-api",
+  "version": "0.0.1",
+  "description": "",
+  "license": "GPL-3.0-only",
+  "author": "nul00000000",
+  "type": "commonjs",
+  "main": "index.ts"
+}
