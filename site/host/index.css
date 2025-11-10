@@ -1,0 +1,29 @@
+@font-face {
+    font-family: comic;
+    src: url(../assests/COMIC.TTF);
+}
+
+#counter {
+    
+}
+
+body {
+    margin: 0;
+    text-align: center;
+    font-family: comic;
+    font-size: 2vh;
+    overflow: hidden;
+}
+
+#mainContainer {
+    display: flex;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+
+    background-color: rgb(172, 172, 172);
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

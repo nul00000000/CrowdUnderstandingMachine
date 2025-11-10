@@ -2,25 +2,25 @@ const upvote = document.querySelector("#upvote") as HTMLDivElement;
 const downvote = document.querySelector("#downvote") as HTMLDivElement;
 
 upvote.onclick = () => {
-    let upreq = new XMLHttpRequest();
-    upreq.open("POST", "/presentinator/api/", true);
-    upreq.setRequestHeader("Content-Type", "application/json");
-    upreq.onreadystatechange = () => {
-        // if(upreq.readyState == 4 && upreq.status == 200) {
-
-        // }
+    let req = new XMLHttpRequest();
+    req.open("POST", "/presentinator/api/", true);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.onreadystatechange = () => {
+        if(req.readyState == 4 && req.status == 200) {
+            console.log(JSON.parse(req.response).votes);
+        }
     };
-    upreq.send(JSON.stringify({vote: 1}));
+    req.send(JSON.stringify({vote: 1}));
 };
 
 downvote.onclick = () => {
-    let upreq = new XMLHttpRequest();
-    upreq.open("POST", "/presentinator/api/", true);
-    upreq.setRequestHeader("Content-Type", "application/json");
-    upreq.onreadystatechange = () => {
-        // if(upreq.readyState == 4 && upreq.status == 200) {
-
-        // }
+    let req = new XMLHttpRequest();
+    req.open("POST", "/presentinator/api/", true);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.onreadystatechange = () => {
+        if(req.readyState == 4 && req.status == 200) {
+            console.log(JSON.parse(req.response).votes);
+        }
     };
-    upreq.send(JSON.stringify({vote: -1}));
+    req.send(JSON.stringify({vote: -1}));
 };
