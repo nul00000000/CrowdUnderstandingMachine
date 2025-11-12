@@ -1,6 +1,43 @@
 const upvote = document.querySelector("#upvote") as HTMLDivElement;
 const downvote = document.querySelector("#downvote") as HTMLDivElement;
 
+const roomFinder = document.querySelector("#roomFinder") as HTMLDivElement;
+const votingContainer = document.querySelector("#votingContainer") as HTMLDivElement;
+const roomCode2 = document.querySelector("#roomCode") as HTMLInputElement;
+const joinButton2 = document.querySelector("#join") as HTMLButtonElement;
+
+let room2: string;
+
+// type HostInfo = {
+//     code: number,
+//     votes?: number,
+//     error?: number
+// };
+
+function setup2() {
+    roomCode2.oninput = () => {
+        let req = new XMLHttpRequest();
+        req.open("POST", "/presentinator/api/hostinfo/", true);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.onreadystatechange = () => {
+            if(req.readyState == 4 && req.status == 200) {
+                let resp: HostInfo = JSON.parse(req.response);
+                joinButton2.disabled = resp.code != 0;
+            }
+        };
+        req.send(JSON.stringify({room: roomCode2.value}));
+    };
+
+    joinButton2.onclick = () => {
+        room2 = roomCode2.value;
+
+        roomFinder.style.display = "none";
+        votingContainer.style.display = "flex";
+    };
+}
+
+setup2();
+
 upvote.onclick = () => {
     let req = new XMLHttpRequest();
     req.open("POST", "/presentinator/api/", true);
@@ -10,7 +47,7 @@ upvote.onclick = () => {
             console.log(JSON.parse(req.response).votes);
         }
     };
-    req.send(JSON.stringify({vote: 1}));
+    req.send(JSON.stringify({room: room2, vote: 1}));
 };
 
 downvote.onclick = () => {
@@ -22,5 +59,5 @@ downvote.onclick = () => {
             console.log(JSON.parse(req.response).votes);
         }
     };
-    req.send(JSON.stringify({vote: -1}));
+    req.send(JSON.stringify({room: room2, vote: -1}));
 };
