@@ -4,9 +4,9 @@
         <link rel="stylesheet" href="index.css">
 		<link rel="icon" href="favicon.ico">
 		<meta charset="utf-8" />
-		<meta content="Presentinator" property="og:title" />
-		<meta content="Vote on your friends' presentations!" property="og:description" />
-		<meta content="https://monke.gay/presentinator/" property="og:url" />
+		<meta content="Presentinator Host Dashboard" property="og:title" />
+		<meta content="See results of an understood crowd" property="og:description" />
+		<meta content="https://monke.gay/presentinator/host/" property="og:url" />
 		<meta content="https://monke.gay/presentinator/favicon.png" property="og:image" />
 		<meta content="#c73e3e" data-react-helmet="true" name="theme-color" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
@@ -14,7 +14,15 @@
     </head>
     <body>
         <div id="mainContainer">
-            <div id="counter">0</div>
+			<div id="mainContent">
+				<label for="roomCode">Room Code:</label>
+				<input type="text" id="roomCode" name="roomCode" size="10"/>
+				<button id="join">Join</button>
+				<div id="hostInfo">
+					
+					<div id="counter"></div>
+				</div>
+			</div>
             <div id="credits">
 
             </div>
