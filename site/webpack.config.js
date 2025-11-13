@@ -29,9 +29,9 @@ const landing = {
   },
 };
 
-const host = {
+const app = {
   entry: './host/src/index.ts',
-  mode: "production",
+  mode: "development",
   devtool: 'source-map',
   module: {
     rules: [
@@ -58,4 +58,33 @@ const host = {
   },
 };
 
-module.exports = [landing, host];
+// const chat = {
+//   entry: './chat/src/index.ts',
+//   mode: "development",
+//   devtool: 'source-map',
+//   module: {
+//     rules: [
+//       {
+//         test: /\.tsx?$/,
+//         use: 'ts-loader',
+//         exclude: /node_modules/,
+//       },
+//     ],
+//   },
+//   resolve: {
+//     extensions: ['.tsx', '.ts', '.js'],
+//     fallback: {
+//       fs: false,
+//       path: false,
+//       crypto: false,
+//       stream: false,
+//       vm: false
+//     },
+//   },
+//   output: {
+//     filename: 'bundle.js',
+//     path: path.resolve(__dirname, 'chat/dist'),
+//   },
+// };
+
+module.exports = [landing, app];

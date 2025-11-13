@@ -1,3 +1,5 @@
+export {};
+
 const counter = document.querySelector("#counter") as HTMLDivElement;
 const roomCode = document.querySelector("#roomCode") as HTMLInputElement;
 const joinButton = document.querySelector("#join") as HTMLButtonElement;
