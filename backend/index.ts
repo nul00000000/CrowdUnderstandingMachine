@@ -7,13 +7,14 @@ console.log("CUM server running");
 app.use(express.json());
 
 type VoteTick = {
-	votes: number,
-	time: number
+	time: number, //time since room start in seconds
+	votes: number //votes
 };
 
 type Room = {
 	votes: number,
 	voteGraph: VoteTick[],
+	startTime: number,
 	lastUsed: number
 };
 
@@ -24,7 +25,10 @@ app.post("/", (req, res) => {
 	let vote = Math.sign(req.body.vote);
 	if(name in rooms) {
 		rooms[name].votes += vote;
-		rooms[name].voteGraph.push({votes: rooms[name].votes, time: Date.now()});
+		if(rooms[name].voteGraph.length == 0) {
+			rooms[name].startTime = Date.now();
+		}
+		rooms[name].voteGraph.push({time: (Date.now() - rooms[name].startTime) / 1000, votes: rooms[name].votes});
 		rooms[name].lastUsed = Date.now();
 		res.send({code: 0, votes: rooms[name].votes});
 	} else {
@@ -36,7 +40,7 @@ app.post("/create/", (req, res) => {
 	if(req.body.room in rooms) {
 		res.send({code: 2, error: "Room already exists"});
 	} else {
-		rooms[req.body.room] = {votes: 0, voteGraph: [], lastUsed: Date.now()};
+		rooms[req.body.room] = {votes: 0, voteGraph: [], startTime: Date.now(), lastUsed: Date.now()};
 		console.log(`Created room ${req.body.room}`);
 		res.send({code: 0});
 	}
