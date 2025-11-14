@@ -45,3 +45,16 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+#graphContainer {
+    background-color: white;
+    width: 64vh;
+    height: 36vh;
+
+    border: 2px solid black;
+}
+
+#score {
+    font-size: 1.5em;
+    font-weight: bold;
+}
