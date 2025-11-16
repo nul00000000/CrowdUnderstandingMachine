@@ -12,6 +12,9 @@ const voteGraph = document.querySelector("#voteGraph") as HTMLCanvasElement;
 let chart: Chart;
 
 let room: string;
+let roomJoined = false;
+
+let intervalId: NodeJS.Timeout;
 
 let roomData: Room = {votes: 0, voteGraph: []};
 
@@ -147,25 +150,31 @@ function setup() {
     };
 
     joinButton.onclick = () => {
-        room = roomCode.value;
+        if(roomJoined) {
+            clearInterval(intervalId);
+        } else {
+            room = roomCode.value;
 
-        let req = new XMLHttpRequest();
-        req.open("POST", "/presentinator/api/hostinfo/", true);
-        req.setRequestHeader("Content-Type", "application/json");
-        req.onreadystatechange = () => {
-            if(req.readyState == 4 && req.status == 200) {
-                let resp: HostInfo = JSON.parse(req.response);
-                if(resp.code == 0) {
-                    //room variable already set
-                } else {
-                    createRoom(room);
+            let req = new XMLHttpRequest();
+            req.open("POST", "/presentinator/api/hostinfo/", true);
+            req.setRequestHeader("Content-Type", "application/json");
+            req.onreadystatechange = () => {
+                if(req.readyState == 4 && req.status == 200) {
+                    let resp: HostInfo = JSON.parse(req.response);
+                    if(resp.code == 0) {
+                        //room variable already set
+                    } else {
+                        createRoom(room);
+                    }
+                    intervalId = setInterval(loop, 100);
+                    // joinButton.style.visibility = "hidden";
+                    joinButton.textContent = "End Room";
+                    roomCode.disabled = true;
+                    roomJoined = true;
                 }
-                setInterval(loop, 100);
-                joinButton.style.visibility = "hidden";
-                roomCode.disabled = true;
-            }
-        };
-        req.send(JSON.stringify({room: room}));
+            };
+            req.send(JSON.stringify({room: room}));
+        }
     };
 }
 
