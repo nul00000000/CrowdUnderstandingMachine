@@ -15,7 +15,8 @@
 #upvote {
     width: 30vh;
     height: 30vh;
-    background-color: #8FC73E;
+    background-image: url("assests/up.png");
+    background-size: cover;
 
     user-select: none;
 }
@@ -23,7 +24,8 @@
 #downvote {
     width: 30vh;
     height: 30vh;
-    background-color: #c73e3e;
+    background-image: url("assests/down.png");
+    background-size: cover;
 
     user-select: none;
 }
