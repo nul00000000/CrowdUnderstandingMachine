@@ -31,15 +31,14 @@ body {
     font-family: comic;
     font-size: 2vh;
     overflow: hidden;
+    background-color: rgb(172, 172, 172);
 }
 
 #mainContainer {
     display: flex;
     position: absolute;
     width: 100vw;
-    height: 100vh;
-
-    background-color: rgb(172, 172, 172);
+    height: 98vh;
 
     flex-direction: column;
     justify-content: center;
@@ -57,4 +56,14 @@ body {
 #score {
     font-size: 1.5em;
     font-weight: bold;
+}
+
+#credits {
+    position: absolute;
+    bottom: 0.5vh;
+    left: 50%;
+    transform: translate(-50%, 0);
+
+    font-size: 1.5vh;
+    color: rgb(80, 80, 80);
 }

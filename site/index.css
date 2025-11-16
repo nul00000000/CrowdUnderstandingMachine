@@ -16,12 +16,16 @@
     width: 30vh;
     height: 30vh;
     background-color: #8FC73E;
+
+    user-select: none;
 }
 
 #downvote {
     width: 30vh;
     height: 30vh;
     background-color: #c73e3e;
+
+    user-select: none;
 }
 
 body {
@@ -67,4 +71,14 @@ body {
 
 #votingContainer {
     display: none;
+}
+
+#credits {
+    position: absolute;
+    bottom: 0.5vh;
+    left: 50%;
+    transform: translate(-50%, 0);
+
+    font-size: 1.5vh;
+    color: rgb(80, 80, 80);
 }
