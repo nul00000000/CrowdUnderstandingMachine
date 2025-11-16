@@ -49,7 +49,6 @@ app.post("/create/", (req, res) => {
 app.post("/hostinfo/", (req, res) => {
 	if(req.body.room in rooms) {
 		res.send({code: 0, room: rooms[req.body.room]});
-		rooms[req.body.room].lastUsed = Date.now();
 	} else {
 		res.send({code: 1, error: "Room does not exist"});
 	}
@@ -57,4 +56,12 @@ app.post("/hostinfo/", (req, res) => {
 
 app.listen(8787, () => {
     console.log("CUM hosting on 8787");
+	setInterval(() => {
+		for(let key in rooms) {
+			if(Date.now() > rooms[key].lastUsed + 24 * 60 * 60 * 1000) {
+				delete rooms[key];	
+				console.log(`Room ${key} died of old age`);
+			}
+		}
+	}, 2000)
 });
