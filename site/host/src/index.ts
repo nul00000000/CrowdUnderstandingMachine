@@ -5,6 +5,9 @@ const opinion = document.querySelector("#opinion") as HTMLDivElement;
 const engagement = document.querySelector("#engagement") as HTMLDivElement;
 const score = document.querySelector("#score") as HTMLDivElement;
 const roomCode = document.querySelector("#roomCode") as HTMLInputElement;
+const minMaxRow = document.querySelector("#minMaxRow") as HTMLInputElement;
+const roomMax = document.querySelector("#roomMax") as HTMLInputElement;
+const roomMin = document.querySelector("#roomMin") as HTMLInputElement;
 const joinButton = document.querySelector("#join") as HTMLButtonElement;
 
 const voteGraph = document.querySelector("#voteGraph") as HTMLCanvasElement;
@@ -27,8 +30,8 @@ type VoteTick = {
 };
 
 type Room = {
-    votes: number;
-    voteGraph: VoteTick[];
+    votes: number,
+    voteGraph: VoteTick[],
 };
 
 type HostInfo = {
@@ -51,7 +54,7 @@ function createRoom(roomCode: string) {
             }
         }
     };
-    req.send(JSON.stringify({room: roomCode}));
+    req.send(JSON.stringify({room: roomCode, max: roomMax.value, min: roomMin.value}));
 }
 
 function loop() {
@@ -167,7 +170,7 @@ function setup() {
                         createRoom(room);
                     }
                     intervalId = setInterval(loop, 100);
-                    // joinButton.style.visibility = "hidden";
+					minMaxRow.style.display = "none";
                     joinButton.textContent = "End Room";
                     roomCode.disabled = true;
                     roomJoined = true;
