@@ -15,7 +15,9 @@ type Room = {
 	votes: number,
 	voteGraph: VoteTick[],
 	startTime: number,
-	lastUsed: number
+	lastUsed: number,
+	max: number,
+	min: number
 };
 
 let rooms: { [name: string]: Room; } = {};
@@ -40,8 +42,9 @@ app.post("/create/", (req, res) => {
 	if(req.body.room in rooms) {
 		res.send({code: 2, error: "Room already exists"});
 	} else {
-		rooms[req.body.room] = {votes: 0, voteGraph: [], startTime: Date.now(), lastUsed: Date.now()};
-		console.log(`Created room ${req.body.room}`);
+		rooms[req.body.room] = {votes: 0, voteGraph: [], 
+			startTime: Date.now(), lastUsed: Date.now(), max: req.body.max, min: req.body.min};
+		console.log(`[${new Date().toISOString()}] Created room ${req.body.room}`);
 		res.send({code: 0});
 	}
 });
@@ -60,7 +63,7 @@ app.listen(8787, () => {
 		for(let key in rooms) {
 			if(Date.now() > rooms[key].lastUsed + 24 * 60 * 60 * 1000) {
 				delete rooms[key];	
-				console.log(`Room ${key} died of old age`);
+				console.log(`[${new Date().toISOString()}] Room ${key} died of old age`);
 			}
 		}
 	}, 2000)
