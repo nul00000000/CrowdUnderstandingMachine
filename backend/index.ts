@@ -26,7 +26,7 @@ app.post("/", (req, res) => {
 	let name = req.body.room;
 	let vote = Math.sign(req.body.vote);
 	if(name in rooms) {
-		rooms[name].votes += vote;
+		rooms[name].votes = Math.min(Math.max(rooms[name].votes + vote, rooms[name].min), rooms[name].max);
 		if(rooms[name].voteGraph.length == 0) {
 			rooms[name].startTime = Date.now();
 		}
