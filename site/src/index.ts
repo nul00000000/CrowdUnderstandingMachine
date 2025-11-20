@@ -17,6 +17,11 @@ type HostInfo = {
 };
 
 function setup() {
+	const urlParams = new URLSearchParams(window.location.search);
+	if(urlParams.has("room")) {
+		roomCode.value = urlParams.get("room");
+	}
+
     roomCode.oninput = () => {
         let req = new XMLHttpRequest();
         req.open("POST", "/presentinator/api/hostinfo/", true);

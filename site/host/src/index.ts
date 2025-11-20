@@ -19,7 +19,9 @@ let roomJoined = false;
 
 let intervalId: NodeJS.Timeout;
 
-let roomData: Room = {votes: 0, voteGraph: []};
+let roomData: Room = {votes: 0, voteGraph: [], startTime: 0};
+
+let voteData: VoteTick[] = [];
 
 let voteGraphPoints: {x: number, y:number}[] = [];
 let engageGraphPoints: {x: number, y:number}[] = [];
@@ -32,6 +34,7 @@ type VoteTick = {
 type Room = {
     votes: number,
     voteGraph: VoteTick[],
+	startTime: number
 };
 
 type HostInfo = {
@@ -57,6 +60,36 @@ function createRoom(roomCode: string) {
     req.send(JSON.stringify({room: roomCode, max: roomMax.value, min: roomMin.value}));
 }
 
+function updateChart() {
+	voteGraphPoints = voteData.map((val: VoteTick) => {return {x: val.time, y: val.votes}});
+	engageGraphPoints = new Array(Math.floor(voteData[voteData.length - 1].time) + 1);
+
+	let totalOpinion = 0;
+
+	for(let i = 0; i < engageGraphPoints.length - 1; i++) {
+		engageGraphPoints[i] = {x: i, y: 0};
+	}
+	engageGraphPoints[engageGraphPoints.length - 1] = {x: voteData[voteData.length - 1].time, y:0};
+	for(let i = 0; i < voteData.length; i++) {
+		engageGraphPoints[Math.floor(voteData[i].time)].y++;
+		if(i != 0) {
+			totalOpinion += (voteData[i].votes + voteData[i - 1].votes) / 2 * (voteData[i].time - voteData[i - 1].time);
+		}
+	}
+
+	chart.data.datasets[0].data = [...voteGraphPoints];
+	chart.data.datasets[1].data = [...engageGraphPoints];
+	chart.update("none");
+
+	let opinionScore = totalOpinion / voteData[voteData.length - 1].time;
+	let engagementScore = voteData.length / voteData[voteData.length - 1].time;
+
+	opinion.textContent = "Opinion Score: " + Math.floor(opinionScore * 100) / 100;
+	engagement.textContent = "Engagement Score: " + Math.floor(engagementScore * 100) / 100;
+	score.textContent = "Score: " + Math.floor((opinionScore + engagementScore) * 100) / 100;
+
+}
+
 function loop() {
     let req = new XMLHttpRequest();
     req.open("POST", "/presentinator/api/hostinfo/", true);
@@ -64,38 +97,18 @@ function loop() {
     req.onreadystatechange = () => {
         if(req.readyState == 4 && req.status == 200) {
             roomData = (JSON.parse(req.response) as HostInfo).room;
-            voteGraphPoints = roomData.voteGraph.map((val: VoteTick) => {return {x: val.time, y: val.votes}});
-            engageGraphPoints = new Array(Math.floor(roomData.voteGraph[roomData.voteGraph.length - 1].time) + 1);
-
-            let totalOpinion = 0;
-
-            for(let i = 0; i < engageGraphPoints.length - 1; i++) {
-                engageGraphPoints[i] = {x: i, y: 0};
-            }
-            engageGraphPoints[engageGraphPoints.length - 1] = {x: roomData.voteGraph[roomData.voteGraph.length - 1].time, y:0};
-            for(let i = 0; i < roomData.voteGraph.length; i++) {
-                engageGraphPoints[Math.floor(roomData.voteGraph[i].time)].y++;
-                if(i != 0) {
-                    totalOpinion += (roomData.voteGraph[i].votes + roomData.voteGraph[i - 1].votes) / 2 * (roomData.voteGraph[i].time - roomData.voteGraph[i - 1].time);
-                }
-            }
-
-            chart.data.datasets[0].data = [...voteGraphPoints];
-            chart.data.datasets[1].data = [...engageGraphPoints];
-            chart.update("none");
-
-            let opinionScore = totalOpinion / roomData.voteGraph[roomData.voteGraph.length - 1].time;
-            let engagementScore = roomData.voteGraph.length / roomData.voteGraph[roomData.voteGraph.length - 1].time;
-
-            opinion.textContent = "Opinion Score: " + Math.floor(opinionScore * 100) / 100;
-            engagement.textContent = "Engagement Score: " + Math.floor(engagementScore * 100) / 100;
-            score.textContent = "Score: " + Math.floor((opinionScore + engagementScore) * 100) / 100;
+			voteData = roomData.voteGraph;
+			updateChart();
         }
     };
     req.send(JSON.stringify({room: room}));
 }
 
 function setup() {
+	const urlParams = new URLSearchParams(window.location.search);
+	if(urlParams.has("room")) {
+		roomCode.value = urlParams.get("room");
+	}
     chart = new Chart(voteGraph, {
 		type: 'line',
 		data: {
@@ -155,9 +168,10 @@ function setup() {
     joinButton.onclick = () => {
         if(roomJoined) {
             clearInterval(intervalId);
+			voteData.push({time: (Date.now() - roomData.startTime) / 1000, votes: voteData[voteData.length - 1].votes});
+			updateChart();
         } else {
             room = roomCode.value;
-
             let req = new XMLHttpRequest();
             req.open("POST", "/presentinator/api/hostinfo/", true);
             req.setRequestHeader("Content-Type", "application/json");
@@ -174,6 +188,8 @@ function setup() {
                     joinButton.textContent = "End Room";
                     roomCode.disabled = true;
                     roomJoined = true;
+
+					window.history.pushState({id: "100"}, `Room: ${room}`, `/presentinator/host/?room=${room.toLowerCase()}`);
                 }
             };
             req.send(JSON.stringify({room: room}));
