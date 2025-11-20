@@ -23,7 +23,7 @@ type Room = {
 let rooms: { [name: string]: Room; } = {};
 
 app.post("/", (req, res) => {
-	let name = req.body.room;
+	let name = req.body.room.toLowerCase();
 	let vote = Math.sign(req.body.vote);
 	if(name in rooms) {
 		rooms[name].votes = Math.min(Math.max(rooms[name].votes + vote, rooms[name].min), rooms[name].max);
@@ -39,19 +39,20 @@ app.post("/", (req, res) => {
 });
 
 app.post("/create/", (req, res) => {
-	if(req.body.room in rooms) {
+	let roomCode = req.body.room.toLowerCase();
+	if(roomCode in rooms) {
 		res.send({code: 2, error: "Room already exists"});
 	} else {
-		rooms[req.body.room] = {votes: 0, voteGraph: [], 
+		rooms[roomCode] = {votes: 0, voteGraph: [], 
 			startTime: Date.now(), lastUsed: Date.now(), max: req.body.max, min: req.body.min};
-		console.log(`[${new Date().toISOString()}] Created room ${req.body.room}`);
+		console.log(`[${new Date().toISOString()}] Created room ${roomCode}`);
 		res.send({code: 0});
 	}
 });
 
 app.post("/hostinfo/", (req, res) => {
-	if(req.body.room in rooms) {
-		res.send({code: 0, room: rooms[req.body.room]});
+	if(req.body.room.toLowerCase() in rooms) {
+		res.send({code: 0, room: rooms[req.body.room.toLowerCase()]});
 	} else {
 		res.send({code: 1, error: "Room does not exist"});
 	}
